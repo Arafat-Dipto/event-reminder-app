@@ -22,7 +22,7 @@ class EventRepository extends BaseRepository implements IEventRepository
         $this->model = $model;
     }
 
-    * all the events
+    /** all the events
      *
      * @return null|LengthAwarePaginator
      */
