@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EventRepository extends BaseRepository implements IEventRepository
 {
@@ -21,13 +22,12 @@ class EventRepository extends BaseRepository implements IEventRepository
         $this->model = $model;
     }
 
-    /**
-     * all the privileges
+    * all the events
      *
-     * @return null|array
+     * @return null|LengthAwarePaginator
      */
-    public function allEvents(): ?array
+    public function allEvents(): ?LengthAwarePaginator
     {
-        return $this->model::orderBy('id', 'desc')->paginate(10)->toArray();
+        return $this->model::latest()->paginate(10);
     }
 }

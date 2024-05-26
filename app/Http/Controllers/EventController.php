@@ -28,12 +28,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        // $events = $this->eventRepository->allEvents();
-        $events = Event::latest()->paginate(10);
-
-        // Your query builder or Eloquent model
-        // $events      = $eventsQuery->paginate(10);
-
+        $events = $this->eventRepository->allEvents();
         return view('events.index', compact('events'));
     }
 

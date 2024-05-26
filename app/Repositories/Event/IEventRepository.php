@@ -3,11 +3,12 @@
 namespace App\Repositories\Event;
 
 use App\Repositories\IBaseRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface IEventRepository extends IBaseRepository
 {
     /**
-     * @return array|null
+     * @return LengthAwarePaginator|null
      */
-    public function allEvents(): ?array;
+    public function allEvents(): ?LengthAwarePaginator;
 }
