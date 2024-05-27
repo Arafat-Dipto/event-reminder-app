@@ -101,13 +101,36 @@ class EventController extends Controller
 
     public function sync(Request $request)
     {
-        foreach ($request->events as $eventData) {
-            Event::updateOrCreate(
-                ['event_id' => $eventData['event_id']],
-                $eventData
-            );
+        try {
+
+            $events = $request->all();
+
+            foreach ($events as $eventData) {
+                // Validate each event data
+                $validated = Validator::make($eventData, [
+                    'title'           => 'required|string|max:255',
+                    'description'     => 'required|string|max:255',
+                    'event_date'      => 'required|date',
+                    'reminders_email' => 'required|email',
+                ])->validate();
+
+                // Create a new event with the validated data
+                $event                  = new Event();
+                $event->title           = $validated['title'];
+                $event->description     = $validated['description'];
+                $event->event_date      = $validated['event_date'];
+                $event->reminders_email = $validated['reminders_email'];
+                $event->save();
+            }
+
+            // Return a JSON response indicating success
+            return response()->json(['message' => 'Events synced successfully'], 201);
+        } catch (\Exception $e) {
+
+            return $e->getMessage();
+
         }
-        return response()->json(['message' => 'Sync successful'], 200);
+
     }
 
     public function import(Request $request)
