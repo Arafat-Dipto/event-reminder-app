@@ -18,6 +18,11 @@
                 @if(session('success'))
                     <p class="alert alert-success">{{ session('success') }}</p>
                 @endif
+                 @if(request()->has('status') && request()->get('status') == 'success')
+                    <div class="alert alert-success">
+                        {{ request()->get('message') }}
+                    </div>
+                @endif
                 @if(session('error'))
                     <p class="alert alert-danger">{{ session('error') }}</p>
                 @endif
