@@ -8,6 +8,7 @@ use App\Http\Services\EventImportService;
 use App\Models\Event;
 use App\Repositories\Event\IEventRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
