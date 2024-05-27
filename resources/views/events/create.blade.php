@@ -77,18 +77,38 @@
 
                     const newEvent = {
                         title: document.getElementById("title").value,
-                        description:
-                            document.getElementById("description").value,
+                        description: document.getElementById("description").value,
                         event_date: document.getElementById("event_date").value,
-                        reminders_email:
-                            document.getElementById("reminders_email").value,
+                        reminders_email: document.getElementById("reminders_email").value,
                     };
 
-                    await saveEvent(newEvent);
-                    displayEvents();
-                });
+                    if (navigator.onLine) {
+                        // Submit form normally if online
+                        try {
+                            const response = await fetch('/events', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                },
+                                body: JSON.stringify(newEvent),
+                            });
 
-            displayEvents();
+                            if (!response.ok) {
+                                throw new Error('Failed to create event');
+                            }
+
+                            // Redirect after successful creation
+                            window.location.href = '/events?status=success&message=Event created successfully';
+                        } catch (error) {
+                            console.error('Error creating event:', error);
+                            alert('Error creating event: ' + error.message);
+                        }
+                    } else {
+                        // Save to IndexedDB if offline
+                        await saveEvent(newEvent);
+                    }
+                });
 
             window.addEventListener("online", async () => {
                 const events = await getEvents();
@@ -96,21 +116,10 @@
                     const synced = await syncEvents(events);
                     if (synced) {
                         await deleteEvents();
-                        window.location.href = '/events?status=success&message=Event created successfully'; // Redirect to the events list page
+                        window.location.href = '/events?status=success&message=Events synced successfully'; // Redirect to the events list page
                     }
                 }
             });
-
-            async function displayEvents() {
-                const events = await getEvents();
-                const eventsList = document.getElementById("events");
-                eventsList.innerHTML = "";
-                events.forEach((event) => {
-                    const li = document.createElement("li");
-                    li.textContent = `${event.title} - ${event.description} - ${event.event_date} - ${event.reminders_email}`;
-                    eventsList.appendChild(li);
-                });
-            }
 
             async function syncEvents(events) {
                 try {
